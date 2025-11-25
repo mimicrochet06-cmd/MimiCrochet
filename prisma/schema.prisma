@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Categorías
+model Category {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  image       String?    // Imagen principal de la categoría
+  icon        String?    // Ícono pequeño opcional
+  color       String?    // Color representativo
+  popular     Boolean    @default(false)
+  order       Int        @default(0)
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([popular])
+}
+
+// Productos
+model Product {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  description   String    @db.Text
+  shortDesc     String?   @db.VarChar(255)
+  price         Float
+  oldPrice      Float?
+  images        String[]
+  featured      Boolean   @default(false)
+  isNew         Boolean   @default(false)
+  available     Boolean   @default(true)
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  colors        String[]
+  dimensions    String?
+  material      String    @default("Hilo acrílico premium")
+  weight        String?
+  customizable  Boolean   @default(false)
+  views         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([slug])
+  @@index([featured])
+  @@index([isNew])
+}
+
+// Admin
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Testimonios
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  message   String
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+  approved  Boolean  @default(true)
+
+  @@map("testimonials")
+}
