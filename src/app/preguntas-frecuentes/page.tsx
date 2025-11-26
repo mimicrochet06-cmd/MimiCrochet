@@ -46,9 +46,7 @@ export default function PreguntasFrecuentes() {
       {/* Hero Section */}
       <section className="relative py-20 lg:py-28 bg-gradient-to-br from-[#8B5CF6]/10 via-[#FBCFE8]/20 to-white overflow-hidden">
         <div className="container mx-auto px-4 max-w-4xl text-center">
-          <span className="inline-block text-sm font-bold text-[#8B5CF6] uppercase tracking-wide mb-4 px-6 py-2 bg-white rounded-full shadow-md">
-            ❓ FAQs
-          </span>
+         
           
           <h1 className="text-5xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] mb-6 leading-tight">
             Preguntas Frecuentes
