@@ -1,0 +1,11 @@
+export async function GET() {
+  return Response.json({
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    NEXTAUTH_URL: !!process.env.NEXTAUTH_URL,
+    NEXTAUTH_SECRET: !!process.env.NEXTAUTH_SECRET,
+    CLOUDINARY_CLOUD_NAME: !!process.env.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: !!process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: !!process.env.CLOUDINARY_API_SECRET,
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  });
+}
