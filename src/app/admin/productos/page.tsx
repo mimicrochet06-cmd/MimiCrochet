@@ -173,59 +173,54 @@ export default function AdminProductos() {
   };
 
   // 💾 Guardar o actualizar
-  const guardarCambios = async () => {
-    if (!form.name || !form.price || !form.categoryId || !form.image) {
-      mostrarToast('¡Por favor completa todos los campos obligatorios!', 'error');
-      return;
+  // 💾 Guardar o actualizar (REEMPLAZA tu función guardarCambios)
+const guardarCambios = async () => {
+  if (!form.name || !form.price || !form.categoryId || !form.image) {
+    mostrarToast('¡Por favor completa todos los campos obligatorios!', 'error');
+    return;
+  }
+
+  setGuardando(true);
+  try {
+    const method = editando ? 'PUT' : 'POST';
+    const url = editando ? `/api/productos/by-id/${editando.id}` : '/api/productos';
+
+    // ✅ YA NO GENERAMOS EL SLUG AQUÍ - La API lo hace automáticamente
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.name,
+        description: form.description || 'Producto artesanal hecho a mano con amor',
+        price: parseFloat(form.price),
+        colors: form.colors ? form.colors.split(',').map(c => c.trim()) : [],
+        images: [form.image],
+        categoryId: form.categoryId,
+        available: true,
+        customizable: true,
+        isNew: form.isNew,
+      }),
+    });
+
+    const data = await res.json();
+    
+    if (data.success) {
+      cargarDatos();
+      setEditando(null);
+      setModoCreacion(false);
+      setPrevisualizacion(null);
+      mostrarToast(editando ? 'Cambios guardados' : 'Producto creado', 'success');
+    } else {
+      // Mostrar el error específico que viene del servidor
+      mostrarToast(data.error || 'Error al guardar', 'error');
     }
-
-    setGuardando(true);
-    try {
-      const method = editando ? 'PUT' : 'POST';
-      const url = editando ? `/api/productos/by-id/${editando.id}` : '/api/productos';
-
-      // Crear slug
-      const slug = form.name
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          slug,
-          description: form.description || 'Producto artesanal hecho a mano con amor',
-          price: parseFloat(form.price),
-          colors: form.colors ? form.colors.split(',').map(c => c.trim()) : [],
-          images: [form.image],
-          categoryId: form.categoryId,
-          available: true,
-          customizable: true,
-          isNew: form.isNew,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        cargarDatos();
-        setEditando(null);
-        setModoCreacion(false);
-        setPrevisualizacion(null);
-        mostrarToast(editando ? 'Cambios guardados' : 'Producto creado', 'success');
-      } else {
-        mostrarToast('Error al guardar', 'error');
-      }
-    } catch (error) {
-      console.error('Error al guardar producto:', error);
-      mostrarToast('Error de conexión al guardar', 'error');
-    } finally {
-      setGuardando(false);
-    }
-  };
+  } catch (error) {
+    console.error('Error al guardar producto:', error);
+    mostrarToast('Error de conexión al guardar', 'error');
+  } finally {
+    setGuardando(false);
+  }
+};
 
   // 🌀 Cargando
   if (loading)
