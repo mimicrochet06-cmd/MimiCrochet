@@ -293,14 +293,14 @@ const guardarCambios = async () => {
 
       {/* 🧾 Panel lateral - FORMULARIO COMPLETO */}
       {(editando || modoCreacion) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => {
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4" onClick={() => {
           setEditando(null);
           setModoCreacion(false);
           setPrevisualizacion(null);
         }}>
           <div
-            className={`fixed top-0 right-0 w-full max-w-md h-full bg-white shadow-2xl p-6 z-50 overflow-y-auto transition-transform duration-300 ${
-              editando || modoCreacion ? 'translate-x-0' : 'translate-x-full'
+            className={`w-full max-w-md lg:max-w-2xl max-h-[95vh] bg-white rounded-3xl shadow-2xl p-6 lg:p-8 z-50 overflow-y-auto transition-all duration-300 ${
+              editando || modoCreacion ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
