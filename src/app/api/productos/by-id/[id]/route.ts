@@ -1,59 +1,45 @@
-// src/app/api/productos/route.ts
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET() {
+// 📝 Editar producto existente
+export async function PUT(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> } // ✅ Cambio 1: Promise<{ id: string }>
+) {
   try {
-    const productos = await prisma.product.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
-        category: { select: { id: true, name: true, slug: true } },
+    const { id } = await params // ✅ Cambio 2: await params
+    const data = await req.json()
+
+    const producto = await prisma.product.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description,
+        price: parseFloat(data.price),
+        colors: data.colors,
+        images: data.images,
+        categoryId: data.categoryId,
       },
     })
-    return NextResponse.json({ success: true, data: productos })
+
+    return NextResponse.json({ success: true, data: producto })
   } catch (error) {
-    console.error('Error al obtener productos:', error)
-    return NextResponse.json({ success: false, error: 'Error al obtener productos' }, { status: 500 })
+    console.error('Error al actualizar producto:', error)
+    return NextResponse.json({ success: false, error: 'Error al actualizar producto' }, { status: 500 })
   }
 }
 
-export async function POST(request: Request) {
+// 🗑️ Eliminar producto
+export async function DELETE(
+  _req: Request, 
+  { params }: { params: Promise<{ id: string }> } // ✅ Cambio 1: Promise<{ id: string }>
+) {
   try {
-    const body = await request.json()
-    const { name, description, price, colors, images, categoryId, isNew, available, customizable } = body
-
-    if (!name || !price || !categoryId) {
-      return NextResponse.json({ success: false, error: 'Nombre, precio y categoría son requeridos' }, { status: 400 })
-    }
-
-    const slug = name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '')
-
-    const nuevoProducto = await prisma.product.create({
-      data: {
-        name,
-        slug,
-        description: description || 'Producto artesanal hecho a mano con amor',
-        price: parseFloat(price),
-        colors: colors || [],
-        images: images || [],
-        categoryId,
-        isNew: isNew ?? true,
-        available: available ?? true,
-        customizable: customizable ?? true,
-      },
-      include: {
-        category: { select: { id: true, name: true, slug: true } },
-      },
-    })
-
-    return NextResponse.json({ success: true, data: nuevoProducto })
+    const { id } = await params // ✅ Cambio 2: await params
+    await prisma.product.delete({ where: { id } })
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error al crear producto:', error)
-    return NextResponse.json({ success: false, error: 'Error interno al crear el producto' }, { status: 500 })
+    console.error('Error al eliminar producto:', error)
+    return NextResponse.json({ success: false, error: 'Error al eliminar producto' }, { status: 500 })
   }
 }

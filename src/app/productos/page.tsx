@@ -5,9 +5,24 @@ import Link from 'next/link'
 
 export const revalidate = 60
 
-async function getProducts() {
+async function getProducts(categorySlug?: string) {
+  const where: {
+    available: boolean
+    categoryId?: string
+  } = { available: true }
+  
+  // Si hay categoría seleccionada, filtrar por ella
+  if (categorySlug && categorySlug !== 'todas') {
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug }
+    })
+    if (category) {
+      where.categoryId = category.id
+    }
+  }
+
   return await prisma.product.findMany({
-    where: { available: true },
+    where,
     include: { category: true },
     orderBy: { createdAt: 'desc' },
   })
@@ -19,11 +34,24 @@ async function getCategories() {
   })
 }
 
-export default async function ProductosPage() {
+export default async function ProductosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ categoria?: string }>
+}) {
+  // Resolver searchParams (Next.js 15)
+  const params = await searchParams
+  const categorySlug = params.categoria
+
   const [products, categories] = await Promise.all([
-    getProducts(),
+    getProducts(categorySlug),
     getCategories(),
   ])
+
+  // Encontrar la categoría actual
+  const currentCategory = categorySlug 
+    ? categories.find(cat => cat.slug === categorySlug)
+    : null
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-white">
@@ -34,7 +62,10 @@ export default async function ProductosPage() {
             ✨ Catálogo MimiCrochet
           </h1>
           <p className="text-xl lg:text-2xl text-[#64748B] mb-8 max-w-3xl mx-auto">
-            Cada mochila es única, tejida a mano con amor y materiales de la mejor calidad.
+            {currentCategory 
+              ? `${currentCategory.name} - Tejidas a mano con amor`
+              : 'Cada mochila es única, tejida a mano con amor y materiales de la mejor calidad.'
+            }
           </p>
           
           {/* Filtros de Categorías */}
@@ -42,7 +73,11 @@ export default async function ProductosPage() {
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <Link
                 href="/productos"
-                className="px-6 py-2 bg-[#8B5CF6] text-white rounded-full font-semibold hover:bg-[#7C3AED] transition shadow-md"
+                className={`px-6 py-2 rounded-full font-semibold transition shadow-md ${
+                  !categorySlug
+                    ? 'bg-[#8B5CF6] text-white'
+                    : 'bg-white text-[#8B5CF6] border-2 border-[#8B5CF6] hover:bg-[#8B5CF6] hover:text-white'
+                }`}
               >
                 Todas
               </Link>
@@ -50,7 +85,11 @@ export default async function ProductosPage() {
                 <Link
                   key={cat.id}
                   href={`/productos?categoria=${cat.slug}`}
-                  className="px-6 py-2 bg-white text-[#8B5CF6] border-2 border-[#8B5CF6] rounded-full font-semibold hover:bg-[#8B5CF6] hover:text-white transition shadow-md"
+                  className={`px-6 py-2 rounded-full font-semibold transition shadow-md ${
+                    categorySlug === cat.slug
+                      ? 'bg-[#8B5CF6] text-white'
+                      : 'bg-white text-[#8B5CF6] border-2 border-[#8B5CF6] hover:bg-[#8B5CF6] hover:text-white'
+                  }`}
                 >
                   {cat.name}
                 </Link>
@@ -65,16 +104,44 @@ export default async function ProductosPage() {
         <div className="container mx-auto px-4">
           {products.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-2xl text-[#64748B]">No hay productos disponibles en este momento</p>
-              <Link
-                href="/"
-                className="inline-block mt-6 px-8 py-3 bg-[#8B5CF6] text-white rounded-full font-bold hover:bg-[#7C3AED] transition"
-              >
-                Volver al Inicio
-              </Link>
+              <div className="text-8xl mb-6">🧶</div>
+              <p className="text-2xl text-[#0F172A] font-bold mb-4">
+                {categorySlug 
+                  ? `No hay productos en "${currentCategory?.name}"`
+                  : 'No hay productos disponibles en este momento'
+                }
+              </p>
+              <p className="text-lg text-[#64748B] mb-8">
+                Pero puedo crear algo especial para ti
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {categorySlug && (
+                  <Link
+                    href="/productos"
+                    className="inline-block px-8 py-3 bg-white border-2 border-[#8B5CF6] text-[#8B5CF6] rounded-full font-bold hover:bg-[#8B5CF6] hover:text-white transition"
+                  >
+                    Ver todos los productos
+                  </Link>
+                )}
+                <Link
+                  href="https://wa.me/+573232267427?text=Hola Carmen! Quiero una mochila personalizada"
+                  className="inline-block px-8 py-3 bg-[#8B5CF6] text-white rounded-full font-bold hover:bg-[#7C3AED] transition"
+                >
+                  Contactar por WhatsApp
+                </Link>
+              </div>
             </div>
           ) : (
             <>
+              {/* Contador de productos */}
+              {categorySlug && (
+                <div className="mb-8 text-center">
+                  <p className="text-lg text-[#64748B]">
+                    {products.length} {products.length === 1 ? 'producto encontrado' : 'productos encontrados'}
+                  </p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {products.map((product) => (
                   <Link

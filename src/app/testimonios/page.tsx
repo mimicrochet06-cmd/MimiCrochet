@@ -188,34 +188,6 @@ export default async function TestimoniosPage() {
           </div>
         </div>
       </section>
-
-      {/* Trust Badges */}
-      <section className="py-16 bg-[#F8FAFC]">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            <div className="text-center">
-              <div className="text-5xl mb-3">🧶</div>
-              <h3 className="font-bold text-[#0F172A] mb-2">Hecho a mano</h3>
-              <p className="text-sm text-[#64748B]">Cada pieza es única</p>
-            </div>
-            <div className="text-center">
-              <div className="text-5xl mb-3">💝</div>
-              <h3 className="font-bold text-[#0F172A] mb-2">Con amor</h3>
-              <p className="text-sm text-[#64748B]">Tejido con dedicación</p>
-            </div>
-            <div className="text-center">
-              <div className="text-5xl mb-3">✨</div>
-              <h3 className="font-bold text-[#0F172A] mb-2">Calidad premium</h3>
-              <p className="text-sm text-[#64748B]">Mejores materiales</p>
-            </div>
-            <div className="text-center">
-              <div className="text-5xl mb-3">🎨</div>
-              <h3 className="font-bold text-[#0F172A] mb-2">Personalizable</h3>
-              <p className="text-sm text-[#64748B]">Elige tus colores</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

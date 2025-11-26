@@ -26,7 +26,7 @@ export default function Contacto() {
               href="https://wa.me/+573232267427?text=¡Hola Carmen! Quiero mi mochila personalizada ♡"
               className="inline-flex items-center gap-4 px-12 py-8 bg-[#25D366] text-white text-2xl font-bold rounded-full hover:bg-[#128C7E] transition-all shadow-2xl hover:shadow-2xl hover:scale-105 group"
             >
-              <MessageCircle className="w-9 h-9 group-hover:rotate-12 transition-transform" />
+              <Heart className="w-9 h-9 group-hover:rotate-12 transition-transform" />
               Chatear por WhatsApp
             </Link>
           </div>
@@ -120,7 +120,7 @@ export default function Contacto() {
               href="https://wa.me/+573232267427?text=¡Hola Carmen! 👋"
               className="inline-flex items-center gap-4 px-12 py-6 bg-white text-[#25D366] text-xl font-bold rounded-full hover:bg-gray-100 transition shadow-2xl hover:scale-105"
             >
-              <MessageCircle className="w-8 h-8" />
+              <Heart className="w-8 h-8" />
               Abrir WhatsApp ahora
             </Link>
           </div>
