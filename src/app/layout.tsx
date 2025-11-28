@@ -48,7 +48,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <WhatsAppButton 
-            phoneNumber="573123456789"
+            phoneNumber="573232267427"
             message="¡Hola Carmen! Vi tu página MimiCrochet y me encanta. Quiero una mochila personalizada ♡"
           />
         </Providers>
